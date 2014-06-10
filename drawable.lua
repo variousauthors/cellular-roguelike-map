@@ -2,12 +2,18 @@
 return (function ()
     local component = "Drawable"
 
-    local draw = function (drawable, entity)
-        local args = {}
+    local getNeeds = function (needs, entity)
+        local result = {}
 
-        for i, k in ipairs(drawable.needs) do
-            table.insert(args, entity[k])
+        for i, k in ipairs(needs) do
+            table.insert(result, entity[k])
         end
+
+        return result
+    end
+
+    local draw = function (drawable, entity)
+        local args = getNeeds(drawable.needs, entity)
 
         drawable.draw(unpack(args))
     end
