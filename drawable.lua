@@ -15,7 +15,7 @@ return (function ()
     local draw = function (drawable, entity)
         local args = getNeeds(drawable.needs, entity)
 
-        drawable.draw(unpack(args))
+        drawable:draw(unpack(args))
     end
 
     return {
