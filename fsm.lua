@@ -64,16 +64,8 @@ FSM = function ()
 
         if current_state.update then current_state.update(dt) end
 
-        for component, system in pairs(Systems )do
-            for index, entity in pairs(Entities) do
-                properties = entity[component]
-
-                if properties and system.update then
-                    inspect(entity)
-
-                    system.update(dt, entity)
-                end
-            end
+        for component, system in pairs(Systems)do
+            if system.update then system.update(dt, entity) end
         end
     end
 
@@ -106,13 +98,7 @@ FSM = function ()
         if current_state.keypressed then current_state.keypressed(key) end
 
         for component, system in pairs(Systems )do
-            for index, entity in pairs(Entities) do
-                properties = entity[component]
-
-                if properties and system.keypressed then
-                    system.keypressed(key, entity)
-                end
-            end
+            if system.keypressed then system.keypressed(key) end
         end
     end
 

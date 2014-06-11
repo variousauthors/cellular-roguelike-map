@@ -3,9 +3,7 @@ return (function ()
     local component = "CellularAutomata"
     local threshold = 4
 
-    local keypressed = function (key, entity)
-        if key ~= " " then return end
-
+    local update_automata = function (key, entity)
         local cells = entity["CellularAutomata"].cells
         local _next = {}
 
@@ -38,6 +36,21 @@ return (function ()
         end
 
         entity["CellularAutomata"].cells = _next
+    end
+
+    local keypressed = function (key)
+        if key ~= " " then return end
+
+        -- update all cellular automata
+        -- TODO maybe this should schedule a run of update,
+        -- rather than calling a function... ?
+        for index, entity in pairs(Entities) do
+            properties = entity[component]
+
+            if properties then
+                update_automata(key, entity)
+            end
+        end
     end
 
     return {
