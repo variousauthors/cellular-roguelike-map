@@ -91,15 +91,17 @@ FSM = function ()
         end
     end
 
+    local set = function (key)
+        current_state.variables[key] = true
+    end
+
     local keypressed = function (key)
         if (key == "escape") then
             love.event.quit()
         end
 
-        -- transition to draw or win
-        if (key == " ") then
-            state_machine.set(key)
-        end
+        -- record the keypress for state transitions
+        set(key)
 
         if current_state.keypressed then current_state.keypressed(key) end
 
@@ -137,10 +139,6 @@ FSM = function ()
 
     local start = function ()
         transitionTo("start")
-    end
-
-    local set = function (key)
-        current_state.variables[key] = true
     end
 
     local isSet = function (key)

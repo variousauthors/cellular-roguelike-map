@@ -12,7 +12,7 @@ function math.round(val, decimal)
 end
 
 local state_machine
-local rng = love.math.newRandomGenerator(os.time())
+rng = love.math.newRandomGenerator(os.time())
 
 Entities = {
     {   -- player
@@ -39,10 +39,10 @@ Entities = {
     (function ()
         local cells = {}
 
-        for i = 1, 10 do
+        for i = 1, 100 do
             cells[i] = {}
 
-            for j = 1, 10 do
+            for j = 1, 50 do
                 cells[i][j] = rng:random(0, 1)
             end
         end
@@ -54,8 +54,8 @@ Entities = {
             -- TODO need to find a way to make draw logic a first class system
             -- it just isn't cool to have big ugly functions hanging out in here
             Drawable = {
-                color     = { 255, 255, 255 },
-                cell_size = 16,
+                color     = { 0, 0, 0 },
+                cell_size = 4,
                 needs     = { "CellularAutomata" },
                 draw      = function (self, c)
                     local r, g, b          = love.graphics.getColor()
@@ -77,10 +77,10 @@ Entities = {
                             love.graphics.setColor({ 255, 0, 0 })
                             for j = 1, #cells do
                                 if cells[i][j] == 1 then
-                                    love.graphics.rectangle("fill", (i - 1)*cell_size + 1, (j - 1)*cell_size + 1, 14, 14)
+                                    love.graphics.rectangle("fill", (i - 1)*cell_size + 1, (j - 1)*cell_size + 1, cell_size - 2, cell_size - 2)
                                 end
                             end
-                            love.graphics.setColor({ 255, 255, 255 })
+                            love.graphics.setColor(color)
                         end
                     end
                     love.graphics.setColor({ r, g, b })
