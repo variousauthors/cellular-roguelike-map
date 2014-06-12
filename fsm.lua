@@ -62,24 +62,14 @@ FSM = function ()
             -- ambiguous state transition
         end
 
-        if current_state.update then current_state.update(dt) end
-
-        for component, system in pairs(Systems)do
-            if system.update then system.update(dt, entity) end
+        for component, system in pairs(current_state.systems)do
+            if system.update then system.update(dt) end
         end
     end
 
     local draw = function ()
-        if current_state.draw then current_state.draw() end
-
-        for component, system in pairs(Systems )do
-            for index, entity in pairs(Entities) do
-                properties = entity[component]
-
-                if properties and system.draw then
-                    system.draw(properties, entity)
-                end
-            end
+        for component, system in pairs(current_state.systems)do
+            if system.draw then system.draw() end
         end
     end
 
@@ -95,20 +85,21 @@ FSM = function ()
         -- record the keypress for state transitions
         set(key)
 
-        if current_state.keypressed then current_state.keypressed(key) end
-
-        for component, system in pairs(Systems )do
+        for component, system in pairs(current_state.systems)do
             if system.keypressed then system.keypressed(key) end
         end
     end
 
     local addState = function(state)
+        local systems = {}
+
+        for i, system in ipairs(state.systems) do
+            systems[system] = Systems[system]
+        end
+
         states[state.name] = {
             name        = state.name,
-            init        = state.init,
-            update      = state.update,
-            draw        = state.draw,
-            keypressed  = state.keypressed,
+            systems     = systems,
             transitions = {},
             variables   = {}
         }

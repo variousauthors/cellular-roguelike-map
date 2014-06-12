@@ -42,71 +42,55 @@ Entities = {
             old_x = 0, old_y = 0
         }
     },
-    (function ()
-        local cells = {}
+    {
+        Cells = Matrix(100, 75, Generators.random(0, 1)),
+        Collision = {},
+        Drawable = {
+            background = { 0, 0, 0 },
+            cell_size  = global.tile_size,
+            cell_color = { 50, 200, 50 },
+            needs      = { "Cells" },
+            draw       = function (self, cells)
+                local r, g, b    = love.graphics.getColor()
+                local cell_size  = self.cell_size
+                local background = self.background
+                local cell_color = self.cell_color
+                local length     = #cells * cell_size
 
-        for i = 1, 100 do
-            cells[i] = {}
+                local ftx, fty = 0, 0
+                love.graphics.push()
+                love.graphics.scale(1)
+                love.graphics.translate(ftx, fty)
 
-            for j = 1, 75 do
-                cells[i][j] = rng:random(0, 1)
-            end
-        end
+                love.graphics.setColor(background)
+                for i = 0, #cells do
+                    love.graphics.line(i*cell_size, 0, i*cell_size, length)
+                    love.graphics.line(0, i*cell_size, length, i*cell_size)
 
-        return {
-            CellularAutomata = {
-                cells = cells
-            },
-            Collision = {},
-            -- TODO need to find a way to make draw logic a first class system
-            -- it just isn't cool to have big ugly functions hanging out in here
-            Drawable = {
-                background = { 0, 0, 0 },
-                cell_size  = global.tile_size,
-                cell_color = { 50, 200, 50 },
-                needs      = { "CellularAutomata" },
-                draw       = function (self, c)
-                    local r, g, b    = love.graphics.getColor()
-                    local cells      = c.cells
-                    local cell_size  = self.cell_size
-                    local background = self.background
-                    local cell_color = self.cell_color
-                    local length     = #cells * cell_size
-
-                    local ftx, fty = 0, 0
-                    love.graphics.push()
-                    love.graphics.scale(1)
-                    love.graphics.translate(ftx, fty)
-
-                    love.graphics.setColor(background)
-                    for i = 0, #cells do
-                        love.graphics.line(i*cell_size, 0, i*cell_size, length)
-                        love.graphics.line(0, i*cell_size, length, i*cell_size)
-
-                        if i > 0 then
-                            love.graphics.setColor(cell_color)
-                            for j = 1, #cells do
-                                if cells[i][j] == 1 then
-                                    love.graphics.rectangle("fill", (i - 1)*cell_size + 1, (j - 1)*cell_size + 1, cell_size - 2, cell_size - 2)
-                                end
+                    if i > 0 then
+                        love.graphics.setColor(cell_color)
+                        for j = 1, #cells do
+                            if cells[i][j] == 1 then
+                                love.graphics.rectangle("fill", (i - 1)*cell_size + 1, (j - 1)*cell_size + 1, cell_size - 2, cell_size - 2)
                             end
-                            love.graphics.setColor(background)
                         end
+                        love.graphics.setColor(background)
                     end
-                    love.graphics.setColor({ r, g, b })
-
-                    love.graphics.pop()
                 end
-            }
+                love.graphics.setColor({ r, g, b })
+
+                love.graphics.pop()
+            end
         }
-    end)()
+    }
 }
 
 Systems = {
     PlayerControlled = require("player_controlled"),
     Drawable         = require("drawable"),
     CellularAutomata = require("cellular_automata"),
-    Collision        = require("collision")
+    Collision        = require("collision"),
+    TitleScreen      = require("title_screen")
 }
 
 function love.focus(f) gameIsPaused = not f end
@@ -119,10 +103,26 @@ function love.load()
     state_machine.addState({
         name       = "start",
         systems    = {
+            "TitleScreen"
+        }
+    })
+
+    state_machine.addState({
+        name       = "run",
+        systems    = {
             "PlayerControlled",
             "Drawable",
-            "Collision"
+            "Collision",
+            "CellularAutomata"
         }
+    })
+
+    state_machine.addTransition({
+        from      = "start",
+        to        = "run",
+        condition = function ()
+            return Systems["TitleScreen"].get("choice") ~= nil
+        end
     })
 
     love.update     = state_machine.update
