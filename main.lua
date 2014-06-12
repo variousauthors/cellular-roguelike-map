@@ -30,7 +30,7 @@ Entities = {
             needs = { "Positioned" },
             draw  = function (self, p)
                 local r, g, b     = love.graphics.getColor()
-                local x, y        = p.x, p.y
+                local x, y        = p.x * global.tile_size, p.y * global.tile_size
                 local w, h, color = self.w, self.h, self.color
 
                 love.graphics.setColor(color)

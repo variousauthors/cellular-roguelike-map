@@ -1,14 +1,23 @@
 
 return (function ()
     local component = "PlayerControlled"
+    local variables = {}
+
+    local set = function (key, value)
+        variables[key] = value
+    end
+
+    local get = function (key)
+        return variables[key]
+    end
 
     local update_player = function (key, entity)
         local position = entity["Positioned"]
 
-        if     key == "up"    then position.y = position.y - global.tile_size
-        elseif key == "down"  then position.y = position.y + global.tile_size
-        elseif key == "right" then position.x = position.x + global.tile_size
-        elseif key == "left"  then position.x = position.x - global.tile_size
+        if     key == "up"    then position.y = position.y - 1
+        elseif key == "down"  then position.y = position.y + 1
+        elseif key == "right" then position.x = position.x + 1
+        elseif key == "left"  then position.x = position.x - 1
         end
 
         if entity["Collision"] then
@@ -22,11 +31,14 @@ return (function ()
 
             if properties then
                 update_player(key, entity)
+                set("player", entity)
             end
         end
     end
 
     return {
-        keypressed = keypressed
+        keypressed = keypressed,
+        set        = set,
+        get        = get
     }
 end)()

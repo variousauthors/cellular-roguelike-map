@@ -4,8 +4,11 @@ return (function ()
     local threshold = 4
 
     local update_automata = function (key, entity)
-        local cells = entity["Cells"]
-        local _next = {}
+        local cells  = entity["Cells"]
+        local player = Systems["PlayerControlled"].get("player")
+        local p_x, p_y = player["Positioned"].y + 1, player["Positioned"].x + 1
+        cells[p_y][p_x] = 1
+        local _next  = {}
 
         for i = 1, #cells do
             _next[i] = {}
@@ -25,16 +28,17 @@ return (function ()
                     end
                 end
 
-                if neighbours > threshold then
+                if neighbours > threshold + 3 then
                     _next[i][j] = 1
-                elseif neighbours < threshold then
-                    _next[i][j] = 0
+                elseif neighbours < threshold - 3 then
+                    _next[i][j] = 1
                 else
-                    _next[i][j] = cells[i][j]
+                    _next[i][j] = 0
                 end
             end
         end
 
+        _next[p_y][p_x] = 0
         entity["Cells"] = _next
     end
 
