@@ -1,5 +1,6 @@
 require "fsm"
 require "system"
+require "matrix"
 
 local i = require("vendor/inspect/inspect")
 inspect = function (a, b)
@@ -11,10 +12,14 @@ function math.round(val, decimal)
   return math.ceil(val * exp - 0.5) / exp
 end
 
+W_WIDTH  = love.window.getWidth()
+W_HEIGHT = love.window.getHeight()
+
 global = {}
 local state_machine
 global.tile_size = 8
 rng = love.math.newRandomGenerator(os.time())
+
 
 Entities = {
     {   -- player
