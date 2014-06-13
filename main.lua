@@ -20,6 +20,7 @@ local state_machine
 global.tile_size = 8
 rng = love.math.newRandomGenerator(os.time())
 
+local cells = Matrix(100, 75, Generators.random(0, 1))
 
 Entities = {
     {   -- player
@@ -41,15 +42,16 @@ Entities = {
         PlayerControlled = {
 
         },
-        Collision = {},
+        Collision = {
+            world = cells
+        },
         Positioned = {
             x = 0, y = 0,
             old_x = 0, old_y = 0
         }
     },
     {
-        Cells = Matrix(100, 75, Generators.random(0, 1)),
-        Collision = {},
+        Cells = cells,
         Drawable = {
             background = { 0, 0, 0 },
             cell_size  = global.tile_size,

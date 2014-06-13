@@ -13,6 +13,8 @@ return (function ()
 
     local update_player = function (key, entity)
         local position = entity["Positioned"]
+        position.old_x = position.x
+        position.old_y = position.y
 
         if     key == "up"    then position.y = position.y - 1
         elseif key == "down"  then position.y = position.y + 1
