@@ -6,8 +6,6 @@ return (function ()
         local world = entity["Collision"].world
         local x, y  = entity["Positioned"].x + 1, entity["Positioned"].y + 1
 
-        inspect({ x, y })
-        inspect(world[y])
         if world[y] then print(world[y][x]) end
 
         return world[x] == nil or world[x][y] == nil or world[x][y] == 1
@@ -19,7 +17,7 @@ return (function ()
         for i, e in ipairs(entities) do
             if e["Collision"].tried_to_move then
                 e["Collision"].tried_to_move = false
-                
+
                 if resolveCollision(e) then
                     e["Positioned"].x = e["Positioned"].old_x
                     e["Positioned"].y = e["Positioned"].old_y
