@@ -8,37 +8,52 @@ return (function ()
         local player    = Systems["PlayerControlled"].get("player")
         local p_x, p_y  = player["Positioned"].y + 1, player["Positioned"].x + 1
         cells[p_y][p_x] = 1
-        local _prev     = {}
+        local _next     = {}
+        local height    = #(cells)
+        local width     = #(cells[1])
 
         for i = 1, #cells do
-            _prev[i] = {}
+            _next[i] = {}
+
+            inspect({ width, height })
 
             for j = 1, #cells do
-                _prev[i][j] = cells[i][j]
+                _next[i][j] = cells[i][j]
                 local neighbours = 0
 
                 -- visit its neighbours
                 for k = 0, 8 do
-                    local row = i + math.floor(k/3) -1
-                    local col = j + k%3 -1
+                    local row = i + math.floor(k/3) - 1
+                    local col = j + k%3 - 1
 
                     if cells[row] ~= nil and cells[row][col] ~= nil then
                         if row ~= i or col ~= j then
                             neighbours = neighbours + cells[row][col]
                         end
                     end
+
+                    if row < 1 or row > height or col < 1 or col > width then
+                        if row ~= i or col ~= j then
+                            neighbours = neighbours + 1
+                        end
+                    end
                 end
 
-                if neighbours > 4 then
-                    cells[i][j] = 1
-                else
-                    cells[i][j] = 0
+                if neighbours > threshold then
+                    _next[i][j] = 1
+                elseif neighbours < threshold then
+                    _next[i][j] = 0
                 end
             end
         end
 
         cells[p_y][p_x] = 0
-        _prev[p_y][p_x] = 0
+        _next[p_y][p_x] = 0
+        for i = 1, #cells do
+            for j = 1, #cells do
+                cells[i][j] = _next[i][j]
+            end
+        end
     end
 
     local keypressed = function (key)

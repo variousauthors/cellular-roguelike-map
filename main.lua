@@ -21,7 +21,7 @@ global.tile_size = 8
 rng = love.math.newRandomGenerator(os.time())
 
 local Cells = {
-    cells = Matrix(10, 10, Generators.random(0, 1))
+    cells = Matrix(100, 75, Generators.random(0, 1))
 }
 
 Entities = {
