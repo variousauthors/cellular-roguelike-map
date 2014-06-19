@@ -48,23 +48,27 @@ Entities = {
             world = Cells.cells
         },
         Positioned = {
-            x = 0, y = 0,
-            old_x = 0, old_y = 0
+            x = 50, y = 50,
+            old_x = 50, old_y = 50
         }
     },
     {
         Cells = Cells.cells,
         Drawable = {
-            background = { 0, 0, 0 },
-            cell_size  = global.tile_size,
-            cell_color = { 50, 200, 50 },
-            needs      = { "Cells" },
+            background     = { 0, 0, 0 },
+            cell_size      = global.tile_size,
+            cell_color     = { 50, 200, 50 },
+            feature_color  = { 200, 50, 50 },
+            treasure_color = { 200, 200, 50 },
+            needs          = { "Cells" },
             draw       = function (self, cells)
-                local r, g, b    = love.graphics.getColor()
-                local cell_size  = self.cell_size
-                local background = self.background
-                local cell_color = self.cell_color
-                local length     = #cells * cell_size
+                local r, g, b       = love.graphics.getColor()
+                local cell_size     = self.cell_size
+                local background    = self.background
+                local cell_color    = self.cell_color
+                local feature_color = self.feature_color
+                local treasure_color = self.treasure_color
+                local length        = #cells * cell_size
 
                 local ftx, fty = 0, 0
                 love.graphics.push()
@@ -77,9 +81,15 @@ Entities = {
                     love.graphics.line(0, i*cell_size, length, i*cell_size)
 
                     if i > 0 then
-                        love.graphics.setColor(cell_color)
                         for j = 1, #cells do
                             if cells[i][j] == 1 then
+                                love.graphics.setColor(cell_color)
+                                love.graphics.rectangle("fill", (i - 1)*cell_size + 1, (j - 1)*cell_size + 1, cell_size - 2, cell_size - 2)
+                            elseif cells[i][j] == 2 then
+                                love.graphics.setColor(feature_color)
+                                love.graphics.rectangle("fill", (i - 1)*cell_size + 1, (j - 1)*cell_size + 1, cell_size - 2, cell_size - 2)
+                            elseif cells[i][j] == 3 then
+                                love.graphics.setColor(treasure_color)
                                 love.graphics.rectangle("fill", (i - 1)*cell_size + 1, (j - 1)*cell_size + 1, cell_size - 2, cell_size - 2)
                             end
                         end

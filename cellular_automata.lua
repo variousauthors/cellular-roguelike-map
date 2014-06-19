@@ -7,7 +7,7 @@ return (function ()
         local cells     = entity["Cells"]
         local player    = Systems["PlayerControlled"].get("player")
         local p_x, p_y  = player["Positioned"].y + 1, player["Positioned"].x + 1
-        cells[p_y][p_x] = 1
+        cells[p_y][p_x] = 2
         local _next     = {}
         local height    = #(cells)
         local width     = #(cells[1])
@@ -21,14 +21,18 @@ return (function ()
                 _next[i][j] = cells[i][j]
                 local neighbours = 0
 
-                -- visit its neighbours
+                -- visit its neighbours (it has 8 neighbours in 2 space)
                 for k = 0, 8 do
                     local row = i + math.floor(k/3) - 1
                     local col = j + k%3 - 1
 
                     if cells[row] ~= nil and cells[row][col] ~= nil then
                         if row ~= i or col ~= j then
-                            neighbours = neighbours + cells[row][col]
+                            if cells[row][col] == 1 then
+                                neighbours = neighbours + 1
+                            elseif cells[row][col] == 2 then
+                                neighbours = neighbours - 1
+                            end
                         end
                     end
 
@@ -41,6 +45,15 @@ return (function ()
 
                 if neighbours > threshold then
                     _next[i][j] = 1
+                elseif neighbours == 0 then
+                    local random = rng:random()
+                    -- a small percent of the time, features will appear
+                    if random < 0.001 then
+                        _next[i][j] = 3
+                    elseif random < 0.01 then
+                        _next[i][j] = 2
+                    end
+
                 elseif neighbours < threshold then
                     _next[i][j] = 0
                 end
