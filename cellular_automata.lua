@@ -1,9 +1,10 @@
-EMPTY    = 0
-SOLID    = 1
-MONSTER  = 2
-TREASURE = 3
-WATER    = 4
-POOL     = 5
+EMPTY     = 0
+SOLID     = 1
+MONSTER   = 2
+TREASURE  = 3
+WATER     = 4
+POOL      = 5
+STRUCTURE = 6
 
 -- returns a function that returns the given value
 local identity = function (value)
@@ -20,7 +21,9 @@ return (function ()
 
     maps[EMPTY] = function (neighbourhood)
         local solid      = neighbourhood[SOLID]
-        local neighbours = solid + neighbourhood[MONSTER]
+        local monster    = neighbourhood[MONSTER]
+        local structure  = neighbourhood[STRUCTURE]
+        local neighbours = solid + monster
         local water      = neighbourhood[WATER]
         local threshold  = 4
         local result = EMPTY
@@ -35,10 +38,24 @@ return (function ()
         if neighbours == 0 then
             local random = rng:random()
             -- a small percent of the time, features will appear
-            if random < 0.001 then
+            if random < 0.0001 then
                 result = TREASURE
-            elseif random < 0.01 then
+            elseif random < 0.001 then
                 result = MONSTER
+            end
+        end
+
+        if monster > 0 then
+            local random = rng:random()
+
+            if random < (0.2 * math.pow(monster/4, 2)) then
+                result = STRUCTURE
+            end
+
+            if structure == 3 then
+                result = STRUCTURE
+            elseif structure > 3 then
+                result = EMPTY
             end
         end
 
@@ -50,6 +67,10 @@ return (function ()
             else
                 result = POOL
             end
+        end
+
+        if structure == 8 then
+            result = SOLID
         end
 
         return result
@@ -80,7 +101,28 @@ return (function ()
         return result
     end
 
-    maps[MONSTER]  = identity(MONSTER)
+    maps[MONSTER]  = function (neighbourhood)
+        local structure = neighbourhood[STRUCTURE]
+        local result    = MONSTER
+
+        if structure == 8 then
+            result = EMPTY
+        end
+
+        return result
+    end
+    maps[STRUCTURE]  = function (neighbourhood)
+        local monster   = neighbourhood[MONSTER]
+        local solid     = neighbourhood[SOLID]
+        local structure = neighbourhood[STRUCTURE]
+        local result    = STRUCTURE
+
+        if solid > 0 then
+            result = SOLID
+        end
+
+        return result
+    end
     maps[TREASURE] = identity(TREASURE)
     maps[POOL]     = function (neighbourhood)
         local pool = neighbourhood[POOL]
@@ -131,7 +173,7 @@ return (function ()
 
             for j = 1, #cells do
                 _next[i][j] = cells[i][j]
-                local neighbourhood = { 0, 0, 0, 0, 0 }
+                local neighbourhood = { 0, 0, 0, 0, 0, 0 }
                 neighbourhood[EMPTY] = 0
 
                 -- visit its neighbours (it has 8 neighbours in 2 space)

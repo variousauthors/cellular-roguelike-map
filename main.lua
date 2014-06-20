@@ -65,7 +65,8 @@ Entities = {
                 { 200, 50, 50 },  -- MONSTER
                 { 200, 200, 50 }, -- TREASURE
                 { 50, 50, 200},   -- WATER
-                { 50, 150, 200},   -- POOL
+                { 50, 150, 200},  -- POOL
+                { 100, 100, 100}, -- STRUCTURE
             },
             needs          = { "Cells" },
             draw       = function (self, cells)
