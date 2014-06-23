@@ -69,8 +69,14 @@ return (function ()
             end
         end
 
-        if structure == 8 then
-            result = SOLID
+        -- this is cool: the structure spreads and then
+        -- becomes rocks
+        if structure == 3 then
+            result = EMPTY
+        elseif structure == 2 then
+            result = STRUCTURE
+        elseif structure > 3 then
+            result = EMPTY
         end
 
         return result
@@ -103,9 +109,10 @@ return (function ()
 
     maps[MONSTER]  = function (neighbourhood)
         local structure = neighbourhood[STRUCTURE]
+        local solid = neighbourhood[SOLID]
         local result    = MONSTER
 
-        if structure == 8 then
+        if structure == 8 or solid == 8 then
             result = EMPTY
         end
 
@@ -175,6 +182,7 @@ return (function ()
                 _next[i][j] = cells[i][j]
                 local neighbourhood = { 0, 0, 0, 0, 0, 0 }
                 neighbourhood[EMPTY] = 0
+
 
                 -- visit its neighbours (it has 8 neighbours in 2 space)
                 for k = 0, 8 do

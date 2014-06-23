@@ -18,6 +18,11 @@ Generators = {
         return function (row, col)
             return rng:random(lower, upper)
         end
+    end,
+    unit = function ()
+        return function ()
+            return 1
+        end
     end
 }
 
